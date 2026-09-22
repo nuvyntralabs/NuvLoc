@@ -3,7 +3,7 @@
 Agent-driven localization CLI for sibling `.resx` hosts (MAUI, WPF, WinUI, Avalonia, Uno).
 
 **Package:** `NuvyntraLabs.NuvLoc.Cli` (`PackAsTool`, command `nuvloc`)  
-**Version:** 1.1.1  
+**Version:** 1.1.2  
 **License:** MIT  
 **Author:** [Niladri Prasad Padhy](https://github.com/NiladriPadhy) / Nuvyntra Labs
 
@@ -35,7 +35,7 @@ dotnet tool install -g NuvyntraLabs.NuvLoc.Cli \
   --add-source ./artifacts \
   --configfile ./nuget.config \
   --ignore-failed-sources \
-  --version 1.1.1
+  --version 1.1.2
 
 nuvloc version
 dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli
@@ -48,6 +48,33 @@ dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli
 Put `i18n.json` at the project root. The host points `source` at an English sibling `.resx`. Culture files are `{stem}.{lang}.resx` next to that file.
 
 `platform` is one of `maui`, `wpf`, `winui`, `avalonia`, or `uno`. WinUI / Uno PRI `.resw` files under `Strings/{lang}/` are out of scope.
+
+`languages` must be [BCP-47](https://www.rfc-editor.org/rfc/rfc5646.html) culture codes (hyphens, not underscores). `--lang` must be one of those configured codes.
+
+### Valid BCP-47 cultures
+
+Language tags follow [BCP-47](https://www.rfc-editor.org/rfc/rfc5646.html) (`es`, `pt-BR`, `zh-Hans`). Other BCP-47 codes also work. Casing does not matter; the CLI stores the canonical name (`PT-br` → `pt-BR`).
+
+The CLI has been tested with these popular codes:
+
+| Code | Language |
+| --- | --- |
+| `es` | Spanish |
+| `fr` | French |
+| `de` | German |
+| `it` | Italian |
+| `nl` | Dutch |
+| `ja` | Japanese |
+| `ko` | Korean |
+| `zh-Hans` | Chinese (Simplified) |
+| `pt-BR` | Portuguese (Brazil) |
+| `ar` | Arabic |
+| `hi` | Hindi |
+| `ru` | Russian |
+
+If a BCP-47 language code fails to translate (or is rejected by the CLI), [open an issue](https://github.com/nuvyntralabs/NuvLoc/issues).
+
+A code that is not BCP-47 (`foo`, `english`, `123`, `es_MX`) does **not** create a localized `.resx`. The CLI exits 2 and prints the error and the reason (not a BCP-47 culture, underscore instead of hyphen, or English source `en` / `en-US` / `en-GB`).
 
 ```json
 {
@@ -76,7 +103,7 @@ cd samples/NuvLocSample
 nuvloc init --configfile i18n.json --agent cursor
 ```
 
-`init` **checks** the file (valid JSON, source exists, languages set) and writes `.nuvloc/` plus agent skills. It does not translate.
+`init` **checks** the file (valid JSON, source exists, BCP-47 languages) and writes `.nuvloc/` plus agent skills. It does not translate.
 
 In Cursor:
 

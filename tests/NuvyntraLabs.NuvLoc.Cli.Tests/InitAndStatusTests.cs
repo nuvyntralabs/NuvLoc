@@ -1,4 +1,5 @@
 using NuvLoc;
+using NuvLoc.Config;
 using NuvLoc.Resources;
 
 namespace NuvyntraLabs.NuvLoc.Cli.Tests;
@@ -47,6 +48,52 @@ public sealed class InitAndStatusTests
         Assert.Equal(ExitCodes.Success, exit);
         Assert.Contains("ItemsLeft", output, StringComparison.Ordinal);
         Assert.Contains(Disclaimer.Text, output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Status_rejects_invalid_lang_flag()
+    {
+        using var dir = new TempDir();
+        SeedProject(dir.Path);
+
+        var (exit, _, err) = await Run(
+            ["status", "--path", dir.Path, "--configfile", "i18n.json", "--lang", "foo", "--no-update-check"]);
+
+        Assert.Equal(ExitCodes.Usage, exit);
+        Assert.Contains("Invalid language code 'foo'", err, StringComparison.Ordinal);
+        Assert.Contains("not a BCP-47 culture", err, StringComparison.Ordinal);
+        Assert.Contains(LanguageCode.SkipFile, err, StringComparison.Ordinal);
+        Assert.False(File.Exists(Path.Combine(dir.Path, "AppResources.foo.resx")));
+    }
+
+    [Fact]
+    public async Task Invalid_language_in_config_skips_culture_file()
+    {
+        using var dir = new TempDir();
+        File.Copy(Fixture("AppResources.resx"), Path.Combine(dir.Path, "AppResources.resx"));
+        File.WriteAllText(Path.Combine(dir.Path, "i18n.json"), """{"platform":"maui","source":"AppResources.resx","languages":["es","foo"]}""");
+
+        var (exit, _, err) = await Run(
+            ["status", "--path", dir.Path, "--configfile", "i18n.json", "--no-update-check"]);
+
+        Assert.Equal(ExitCodes.Usage, exit);
+        Assert.Contains("not a BCP-47 culture", err, StringComparison.Ordinal);
+        Assert.Contains(LanguageCode.SkipFile, err, StringComparison.Ordinal);
+        Assert.False(File.Exists(Path.Combine(dir.Path, "AppResources.foo.resx")));
+    }
+
+    [Fact]
+    public async Task Status_rejects_lang_not_in_config()
+    {
+        using var dir = new TempDir();
+        SeedProject(dir.Path);
+
+        var (exit, _, err) = await Run(
+            ["status", "--path", dir.Path, "--configfile", "i18n.json", "--lang", "de", "--no-update-check"]);
+
+        Assert.Equal(ExitCodes.Usage, exit);
+        Assert.Contains("Unknown language 'de'", err, StringComparison.Ordinal);
+        Assert.Contains("Configured: es", err, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -47,11 +47,11 @@ public static class ConfigLoader
         var errors = new List<ConfigError>();
         var platform = string.IsNullOrWhiteSpace(raw.Platform) ? null : raw.Platform.Trim();
         var source = string.IsNullOrWhiteSpace(raw.Source) ? null : raw.Source.Trim();
-        var languages = raw.Languages?
+        var rawLanguages = raw.Languages?
             .Where(static l => !string.IsNullOrWhiteSpace(l))
             .Select(static l => l.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray() ?? [];
+        var languages = LanguageCode.NormalizeAll(rawLanguages, errors);
 
         if (platform is null)
             errors.Add(new ConfigError("'platform' is required."));
@@ -61,12 +61,13 @@ public static class ConfigLoader
         if (source is null)
             errors.Add(new ConfigError("'source' is required."));
 
-        if (languages.Length == 0)
-            errors.Add(new ConfigError("'languages' must be a non-empty array of culture codes."));
+        if (raw.Languages is null || rawLanguages.Length == 0)
+            errors.Add(new ConfigError("'languages' must be a non-empty array of BCP-47 culture codes (es, fr, pt-BR)."));
 
         var sourceCultures = languages.Where(SourceCultures.Contains).ToArray();
         if (sourceCultures.Length > 0)
-            errors.Add(new ConfigError($"Do not list the English source culture in 'languages' ({string.Join(", ", sourceCultures)})."));
+            errors.Add(new ConfigError(
+                $"Do not list the English source culture in 'languages' ({string.Join(", ", sourceCultures)}). {LanguageCode.SkipFile}"));
 
         if (errors.Count > 0)
             return new ConfigLoadResult(null, errors);

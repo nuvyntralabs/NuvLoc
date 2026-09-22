@@ -87,4 +87,62 @@ public sealed class ConfigLoaderTests
         Assert.False(result.Success);
         Assert.Contains(result.Errors, e => e.Message.Contains("English", StringComparison.OrdinalIgnoreCase));
     }
+
+    [Theory]
+    [InlineData("foo")]
+    [InlineData("english")]
+    [InlineData("123")]
+    [InlineData("es_MX")]
+    [InlineData("xx")]
+    public void Invalid_language_code_fails(string language)
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "AppResources.resx"), "<root></root>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, $$"""{"platform":"maui","source":"AppResources.resx","languages":["{{language}}"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.False(result.Success);
+        Assert.Contains(result.Errors, e => e.Message.Contains(language, StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(result.Errors, e => e.Message.Contains("Invalid language code", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(result.Errors, e => e.Message.Contains(LanguageCode.SkipFile, StringComparison.Ordinal));
+    }
+
+    [Theory]
+    [InlineData("es")]
+    [InlineData("fr")]
+    [InlineData("de")]
+    [InlineData("it")]
+    [InlineData("nl")]
+    [InlineData("ja")]
+    [InlineData("ko")]
+    [InlineData("zh-Hans")]
+    [InlineData("pt-BR")]
+    [InlineData("ar")]
+    [InlineData("hi")]
+    [InlineData("ru")]
+    public void Popular_language_codes_load(string language)
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "AppResources.resx"), "<root></root>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, $$"""{"platform":"maui","source":"AppResources.resx","languages":["{{language}}"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.True(result.Success, string.Join("; ", result.Errors.Select(e => e.Message)));
+        Assert.Equal(language, result.Config!.Languages.Single());
+    }
+
+    [Fact]
+    public void Canonicalizes_language_codes()
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "AppResources.resx"), "<root></root>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, """{"platform":"maui","source":"AppResources.resx","languages":["PT-br","ES","es"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.True(result.Success, string.Join("; ", result.Errors.Select(e => e.Message)));
+        Assert.Equal(["pt-BR", "es"], result.Config!.Languages);
+    }
 }

@@ -7,6 +7,7 @@
   - Avalonia: host-chosen `.resx` (often under `Assets` or `Resources`)
   - Uno: shared `.resx` in the class library
 - Target: sibling `{stem}.{lang}.resx` next to the English source (example: `AppResources.es.resx`).
+- `languages` / `--lang` must be [BCP-47](https://www.rfc-editor.org/rfc/rfc5646.html) codes (hyphens). Tested popular codes: `es`, `fr`, `de`, `it`, `nl`, `ja`, `ko`, `zh-Hans`, `pt-BR`, `ar`, `hi`, `ru`. Other BCP-47 codes also work. If a BCP-47 code fails to translate, open https://github.com/nuvyntralabs/NuvLoc/issues. A non-BCP-47 code (`foo`, `english`, `es_MX`) skips creating that localized `.resx` and prints the error plus reason.
 - Copy `name` and optional `<comment>` from the source. Translate `<value>` only.
 - Preserve `resheader`, schema, comments, and `xml:space`.
 - Do not edit the source file, the `.csproj`, or `NeutralResourcesLanguage`.

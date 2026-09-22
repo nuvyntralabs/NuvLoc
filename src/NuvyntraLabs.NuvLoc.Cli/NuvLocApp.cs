@@ -334,10 +334,14 @@ public static class NuvLocApp
         if (!loaded.Success)
             return WriteConfigErrors(stderr, loaded);
 
+        var config = loaded.Config!;
+        if (!TryResolveLangFilter(config, langs, stderr, out var selected))
+            return ExitCodes.Usage;
+
         var planner = new LocalizationPlanner();
-        var plan = planner.Build(loaded.Config!, langs);
+        var plan = planner.Build(config, selected);
         if (writeCache)
-            planner.WriteAcceptedHashes(loaded.Config!, plan);
+            planner.WriteAcceptedHashes(config, plan);
 
         var json = format.Equals("json", StringComparison.OrdinalIgnoreCase);
         stdout.Write(json ? PlanReporter.Json(plan) : PlanReporter.Human(plan));
@@ -379,6 +383,51 @@ public static class NuvLocApp
         if (found is null)
             stderr.WriteLine("Unknown agent.");
         return found;
+    }
+
+    static bool TryResolveLangFilter(
+        I18nConfig config,
+        IReadOnlyList<string> langs,
+        TextWriter stderr,
+        out IReadOnlyList<string>? selected)
+    {
+        selected = null;
+        var requested = langs
+            .Where(static l => !string.IsNullOrWhiteSpace(l))
+            .Select(static l => l.Trim())
+            .ToArray();
+        if (requested.Length == 0)
+            return true;
+
+        var errors = new List<string>();
+        var wanted = new List<string>();
+        foreach (var lang in requested)
+        {
+            if (!LanguageCode.TryNormalize(lang, out var code, out var error))
+            {
+                errors.Add(error);
+                continue;
+            }
+
+            if (!config.Languages.Contains(code, StringComparer.OrdinalIgnoreCase))
+            {
+                errors.Add($"Unknown language '{code}'. Configured: {string.Join(", ", config.Languages)}. {LanguageCode.SkipFile}");
+                continue;
+            }
+
+            if (!wanted.Contains(code, StringComparer.OrdinalIgnoreCase))
+                wanted.Add(code);
+        }
+
+        if (errors.Count > 0)
+        {
+            foreach (var error in errors)
+                stderr.WriteLine(error);
+            return false;
+        }
+
+        selected = wanted;
+        return true;
     }
 
     static string ResolveConfig(string projectDir, string configFile) =>

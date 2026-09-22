@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.2
+
+- Reject invalid language codes in `i18n.json` and `--lang` (must be a BCP-47 culture such as `es` or `pt-BR`).
+- Non-BCP-47 codes skip creating that localized `.resx` and print the error plus reason.
+- Canonicalize culture names (`PT-br` → `pt-BR`). Underscores (`es_MX`) fail with a hyphen hint.
+- `--lang` that is not in `i18n.json` exits 2 instead of silently reporting no languages.
+
 ## 1.1.1
 
 - CI matches other Labs CLIs: version alignment → NuGet check → tests → pack → publish (`NUGET_KEY_NUVLOC` only).

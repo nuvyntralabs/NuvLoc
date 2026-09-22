@@ -5,8 +5,8 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
-    <Version>1.1.1</Version>
-    <PackageVersion>1.1.1</PackageVersion>
+    <Version>1.1.2</Version>
+    <PackageVersion>1.1.2</PackageVersion>
     <Authors>Niladri Prasad Padhy</Authors>
     <Company>Nuvyntra Labs</Company>
     <Copyright>Copyright (c) Niladri Prasad Padhy</Copyright>
