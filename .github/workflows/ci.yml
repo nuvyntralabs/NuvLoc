@@ -1,46 +1,173 @@
-name: ci
+# PackAsTool pipeline for NuvyntraLabs.NuvLoc.Cli (command nuvloc).
+# Same fail-fast order as other Nuvyntra CLI / plugin repos:
+# version alignment → NuGet key + unpublished version → tests → pack → publish.
+# net10.0 only (no MAUI TFMs, no Windows merge). PackAsTool publishes nupkg, not snupkg.
+# Never push NuGet from a local clone.
+name: CI
 
 on:
   push:
     branches: [main]
-  pull_request:
+    tags: ["v*.*.*"]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Unused. CI publishes after key, version, test, and pack checks succeed
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
   packages: write
 
 jobs:
-  test-and-pack:
+  version-align:
+    name: Version alignment
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout package repo
+        uses: actions/checkout@v4
+
+      - name: Fetch hub CI scripts
+        uses: actions/checkout@v4
+        with:
+          repository: nuvyntralabs/MauiEssentials
+          ref: main
+          path: .ci-tools
+
+      - name: Require matching packable package versions
+        id: check
+        run: |
+          set -euo pipefail
+          script=".github/scripts/check-versions.py"
+          if [ ! -f "$script" ]; then
+            script=".ci-tools/.github/scripts/check-versions.py"
+          fi
+          python3 "$script" --plugin-root .
+
+  version-check:
+    name: NuGet release
+    needs: [version-align]
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout package repo
+        uses: actions/checkout@v4
+
+      - name: Fetch hub CI scripts
+        uses: actions/checkout@v4
+        with:
+          repository: nuvyntralabs/MauiEssentials
+          ref: main
+          path: .ci-tools
+
+      - name: Check NUGET_KEY_NUVLOC and published version
+        env:
+          NUGET_KEY: ${{ secrets.NUGET_KEY_NUVLOC }}
+        run: |
+          set -euo pipefail
+          script=".github/scripts/check-nuget-release.py"
+          if [ ! -f "$script" ]; then
+            script=".ci-tools/.github/scripts/check-nuget-release.py"
+          fi
+          python3 "$script" --plugin-root .
+
+  test:
+    name: Unit tests
+    needs: [version-check]
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "10.0.x"
       - name: Test
-        run: dotnet test NuvLoc.slnx --configuration Release
+        run: dotnet test NuvLoc.slnx --configuration Release --nologo
+
+  pack:
+    name: Pack NuvLoc.Cli
+    needs: [test]
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
       - name: Pack
-        run: dotnet pack src/NuvyntraLabs.NuvLoc.Cli/NuvyntraLabs.NuvLoc.Cli.csproj --configuration Release --output artifacts
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/nuget
+          dotnet pack src/NuvyntraLabs.NuvLoc.Cli/NuvyntraLabs.NuvLoc.Cli.csproj --configuration Release --output artifacts/nuget --nologo
       - uses: actions/upload-artifact@v4
         with:
-          name: NuvLoc-NuGet
-          path: artifacts/*.nupkg
+          name: nuget-NuvLoc-Linux
+          path: artifacts/nuget/*
+          if-no-files-found: error
+          retention-days: 14
 
-      # Pipeline-only publish. Never push from a local clone.
-      # secrets cannot be used in if:; check the key in the script instead.
-      - name: Push nuget.org
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+  publish:
+    name: nuget.org and GitHub Packages
+    needs: [pack]
+    if: success()
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: write
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout package repo
+        uses: actions/checkout@v4
+
+      - name: Fetch hub CI scripts
+        uses: actions/checkout@v4
+        with:
+          repository: nuvyntralabs/MauiEssentials
+          ref: main
+          path: .ci-tools
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Download Linux packages
+        uses: actions/download-artifact@v4
+        with:
+          pattern: nuget-*-Linux
+          path: packages
+          merge-multiple: true
+
+      - name: Push nupkg
         env:
-          NUGET_KEY_NUVLOC: ${{ secrets.NUGET_KEY_NUVLOC }}
+          NUGET_KEY: ${{ secrets.NUGET_KEY_NUVLOC }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY_OWNER: ${{ github.repository_owner }}
         run: |
-          if [ -z "${NUGET_KEY_NUVLOC:-}" ]; then
-            echo "No NUGET_KEY_NUVLOC; skip nuget.org push."
-            exit 0
+          set -euo pipefail
+          script=".github/scripts/push-nuget-packages.py"
+          if [ ! -f "$script" ]; then
+            script=".ci-tools/.github/scripts/push-nuget-packages.py"
           fi
-          dotnet nuget push artifacts/*.nupkg --api-key "$NUGET_KEY_NUVLOC" --source https://api.nuget.org/v3/index.json --skip-duplicate
-      - name: Push GitHub Packages
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: |
-          dotnet nuget push artifacts/*.nupkg --api-key "${{ secrets.GITHUB_TOKEN }}" --source "https://nuget.pkg.github.com/nuvyntralabs/index.json" --skip-duplicate
-        continue-on-error: true
+          python3 "$script" --packages-dir packages

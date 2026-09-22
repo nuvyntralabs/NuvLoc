@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- CI matches other Labs CLIs: version alignment → NuGet check → tests → pack → publish (`NUGET_KEY_NUVLOC` only).
+- `PackageProjectUrl` points at https://nuvyntralabs.github.io/toolkits/nuvloc/
+
 ## 1.1.0
 
 - `platform` accepts `maui`, `wpf`, `winui`, `avalonia`, and `uno` for sibling `.resx` hosts.

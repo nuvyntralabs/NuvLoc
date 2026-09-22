@@ -4,9 +4,9 @@ Agent-driven localization CLI for sibling `.resx` hosts (MAUI, WPF, WinUI, Avalo
 
 - GitHub: https://github.com/nuvyntralabs/NuvLoc
 - NuGet: https://www.nuget.org/packages/NuvyntraLabs.NuvLoc.Cli
-- Version: 1.1.0
+- Version: 1.1.1
 - Install: `dotnet tool install -g NuvyntraLabs.NuvLoc.Cli --source https://api.nuget.org/v3/index.json`
-- Local: `dotnet pack … -o artifacts` then `dotnet tool install -g NuvyntraLabs.NuvLoc.Cli --add-source ./artifacts --configfile ./nuget.config --ignore-failed-sources --version 1.1.0`
+- Local: `dotnet pack … -o artifacts` then `dotnet tool install -g NuvyntraLabs.NuvLoc.Cli --add-source ./artifacts --configfile ./nuget.config --ignore-failed-sources --version 1.1.1`
 - Uninstall: `dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli`
 - Config: `i18n.json` with `platform` (`maui`, `wpf`, `winui`, `avalonia`, `uno`), `source`, `languages`
 - Wire: `nuvloc init --configfile i18n.json --agent cursor`

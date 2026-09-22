@@ -3,7 +3,7 @@
 Agent-driven localization CLI for sibling `.resx` hosts (MAUI, WPF, WinUI, Avalonia, Uno).
 
 **Package:** `NuvyntraLabs.NuvLoc.Cli` (`PackAsTool`, command `nuvloc`)  
-**Version:** 1.1.0  
+**Version:** 1.1.1  
 **License:** MIT  
 **Author:** [Niladri Prasad Padhy](https://github.com/NiladriPadhy) / Nuvyntra Labs
 
@@ -35,7 +35,7 @@ dotnet tool install -g NuvyntraLabs.NuvLoc.Cli \
   --add-source ./artifacts \
   --configfile ./nuget.config \
   --ignore-failed-sources \
-  --version 1.1.0
+  --version 1.1.1
 
 nuvloc version
 dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli
