@@ -1,0 +1,13 @@
+# NuvLoc
+
+Agent-driven localization CLI for .NET MAUI. Command `nuvloc`. Package `NuvyntraLabs.NuvLoc.Cli`.
+
+- GitHub: https://github.com/nuvyntralabs/NuvLoc
+- NuGet: https://www.nuget.org/packages/NuvyntraLabs.NuvLoc.Cli
+- Install: `dotnet tool install -g NuvyntraLabs.NuvLoc.Cli --source https://api.nuget.org/v3/index.json`
+- Config: `i18n.json` with `platform`, `source`, `languages`
+- Wire: `nuvloc init --configfile i18n.json --agent cursor`
+- Agent: `/nuvloc.status` and `/nuvloc.translate`
+- CI: `nuvloc check`
+- No API keys. The coding agent translates.
+- NuvLoc does not give a 100% guarantee on translated text. Review with a native speaker of each target language before ship.

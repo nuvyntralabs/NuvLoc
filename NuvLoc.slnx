@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/NuvLoc.Core/NuvLoc.Core.csproj" />
+    <Project Path="src/NuvyntraLabs.NuvLoc.Cli/NuvyntraLabs.NuvLoc.Cli.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/NuvLoc.Core.Tests/NuvLoc.Core.Tests.csproj" />
+    <Project Path="tests/NuvyntraLabs.NuvLoc.Cli.Tests/NuvyntraLabs.NuvLoc.Cli.Tests.csproj" />
+  </Folder>
+</Solution>

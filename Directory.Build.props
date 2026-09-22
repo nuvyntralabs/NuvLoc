@@ -1,0 +1,19 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0</Version>
+    <PackageVersion>1.0.0</PackageVersion>
+    <Authors>Niladri Prasad Padhy</Authors>
+    <Company>Nuvyntra Labs</Company>
+    <Copyright>Copyright (c) Niladri Prasad Padhy</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/nuvyntralabs/NuvLoc</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nuvyntralabs/NuvLoc</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>dotnet-maui;maui;i18n;localization;cli;dotnet-tool;nuvloc</PackageTags>
+  </PropertyGroup>
+</Project>
