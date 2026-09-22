@@ -1,0 +1,5 @@
+{
+  "platform": "maui",
+  "source": "Resources/Strings/AppResources.resx",
+  "languages": ["es", "fr"]
+}

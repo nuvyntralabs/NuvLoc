@@ -12,7 +12,13 @@ public static class ConfigLoader
     static readonly HashSet<string> KnownPlatforms = new(StringComparer.OrdinalIgnoreCase)
     {
         "maui",
+        "wpf",
+        "winui",
+        "avalonia",
+        "uno",
     };
+
+    const string SupportedPlatforms = "maui, wpf, winui, avalonia, uno";
 
     public static ConfigLoadResult Load(string configPath)
     {
@@ -50,7 +56,7 @@ public static class ConfigLoader
         if (platform is null)
             errors.Add(new ConfigError("'platform' is required."));
         else if (!KnownPlatforms.Contains(platform))
-            errors.Add(new ConfigError($"Unknown platform '{platform}'. 1.0 supports 'maui' only."));
+            errors.Add(new ConfigError($"Unknown platform '{platform}'. Supported: {SupportedPlatforms}."));
 
         if (source is null)
             errors.Add(new ConfigError("'source' is required."));
@@ -78,7 +84,7 @@ public static class ConfigLoader
 
         var ext = Path.GetExtension(config.SourceFullPath);
         if (!ext.Equals(".resx", StringComparison.OrdinalIgnoreCase))
-            return ConfigLoadResult.Fail($"1.0 supports .resx only. Source is '{ext}'.");
+            return ConfigLoadResult.Fail($"Supports sibling .resx only. Source is '{ext}'.");
 
         return new ConfigLoadResult(config, []);
     }

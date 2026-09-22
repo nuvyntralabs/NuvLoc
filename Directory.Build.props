@@ -5,15 +5,15 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Deterministic>true</Deterministic>
-    <Version>1.0.0</Version>
-    <PackageVersion>1.0.0</PackageVersion>
+    <Version>1.1.0</Version>
+    <PackageVersion>1.1.0</PackageVersion>
     <Authors>Niladri Prasad Padhy</Authors>
     <Company>Nuvyntra Labs</Company>
     <Copyright>Copyright (c) Niladri Prasad Padhy</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/nuvyntralabs/NuvLoc</PackageProjectUrl>
+    <PackageProjectUrl>https://nuvyntralabs.github.io/toolkits/nuvloc/</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nuvyntralabs/NuvLoc</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>dotnet-maui;maui;i18n;localization;cli;dotnet-tool;nuvloc</PackageTags>
+    <PackageTags>dotnet-maui;maui;wpf;winui;avalonia;uno;i18n;localization;cli;dotnet-tool;nuvloc</PackageTags>
   </PropertyGroup>
 </Project>

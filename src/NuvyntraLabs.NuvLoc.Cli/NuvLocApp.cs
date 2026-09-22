@@ -13,7 +13,7 @@ public static class NuvLocApp
 {
     public const string Usage =
         """
-        nuvloc — agent-driven localization (MAUI .resx)
+        nuvloc — agent-driven localization (.resx)
 
           nuvloc init        Check i18n.json and install /nuvloc.status + /nuvloc.translate
           nuvloc update      Refresh skills and .nuvloc/reference

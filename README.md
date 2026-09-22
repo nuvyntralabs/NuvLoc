@@ -1,13 +1,13 @@
 # NuvLoc
 
-Agent-driven localization CLI for .NET MAUI (other platforms later).
+Agent-driven localization CLI for sibling `.resx` hosts (MAUI, WPF, WinUI, Avalonia, Uno).
 
 **Package:** `NuvyntraLabs.NuvLoc.Cli` (`PackAsTool`, command `nuvloc`)  
-**Version:** 1.0.0  
+**Version:** 1.1.0  
 **License:** MIT  
 **Author:** [Niladri Prasad Padhy](https://github.com/NiladriPadhy) / Nuvyntra Labs
 
-The CLI checks `i18n.json`, diffs culture `.resx` files, and installs `/nuvloc.status` and `/nuvloc.translate` for your coding agent. **The agent translates.** NuvLoc does not call OpenAI, Azure, or any vendor API and does not take an API key.
+The CLI checks `i18n.json`, diffs culture `.resx` files, and installs `/nuvloc.status` and `/nuvloc.translate` for your coding agent. **The agent translates.** NuvLoc does not call OpenAI, Azure, or any vendor API and does not take an API key. It does not bind strings to the UI — XAML, a markup extension, or code is the host’s choice.
 
 Usual alternatives: Visual Studio Multilingual App Toolkit, [ResXResourceManager](https://github.com/dotnet/ResXResourceManager), Crowdin / Phrase.
 
@@ -22,9 +22,32 @@ nuvloc version
 
 This is a global tool, not an app `PackageReference`.
 
+### Build, install, and uninstall locally
+
+From this repo (or the hub root, adjusting paths):
+
+```bash
+dotnet test NuvLoc.slnx
+dotnet pack src/NuvyntraLabs.NuvLoc.Cli/NuvyntraLabs.NuvLoc.Cli.csproj -c Release -o artifacts
+
+dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli
+dotnet tool install -g NuvyntraLabs.NuvLoc.Cli \
+  --add-source ./artifacts \
+  --configfile ./nuget.config \
+  --ignore-failed-sources \
+  --version 1.1.0
+
+nuvloc version
+dotnet tool uninstall -g NuvyntraLabs.NuvLoc.Cli
+```
+
+`--configfile ./nuget.config` uses nuget.org only. `--ignore-failed-sources` keeps a broken extra feed (for example a 401 Azure Artifacts source in a machine-wide NuGet.config) from aborting the install. If you packed without `-o artifacts`, the nupkg is under `src/NuvyntraLabs.NuvLoc.Cli/bin/Release/`.
+
 ## Config
 
-Put `i18n.json` at the project root:
+Put `i18n.json` at the project root. The host points `source` at an English sibling `.resx`. Culture files are `{stem}.{lang}.resx` next to that file.
+
+`platform` is one of `maui`, `wpf`, `winui`, `avalonia`, or `uno`. WinUI / Uno PRI `.resw` files under `Strings/{lang}/` are out of scope.
 
 ```json
 {
@@ -34,9 +57,22 @@ Put `i18n.json` at the project root:
 }
 ```
 
+WPF example:
+
+```json
+{
+  "platform": "wpf",
+  "source": "Properties/Resources.resx",
+  "languages": ["es", "fr"]
+}
+```
+
+A runnable MAUI host is in [`samples/NuvLocSample`](samples/NuvLocSample) (`i18n.json` + `AppResources.resx` already in place).
+
 ## Use
 
 ```bash
+cd samples/NuvLocSample
 nuvloc init --configfile i18n.json --agent cursor
 ```
 

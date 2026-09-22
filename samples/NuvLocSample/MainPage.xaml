@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:s="clr-namespace:NuvLocSample.Resources.Strings"
+             x:Class="NuvLocSample.MainPage"
+             Title="{x:Static s:AppResources.AppTitle}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30,0" Spacing="25">
+            <Label Text="{x:Static s:AppResources.HelloWorld}"
+                   Style="{StaticResource Headline}"
+                   SemanticProperties.HeadingLevel="Level1" />
+
+            <Label Text="{x:Static s:AppResources.Welcome}"
+                   Style="{StaticResource SubHeadline}"
+                   SemanticProperties.HeadingLevel="Level2" />
+
+            <Button x:Name="CounterBtn"
+                    Text="{x:Static s:AppResources.ClickMe}"
+                    SemanticProperties.Hint="Counts the number of times you click"
+                    Clicked="OnCounterClicked"
+                    HorizontalOptions="Fill" />
+
+            <Label Text="{x:Static s:AppResources.ReviewHint}"
+                   FontSize="13"
+                   LineBreakMode="WordWrap" />
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

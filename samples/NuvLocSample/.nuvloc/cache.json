@@ -1,0 +1,22 @@
+{
+  "entries": {
+    "es": {
+      "AppTitle": "5ae04bf687c2203eabf3244c2f9c7d01fd876bda6955b7d33a526993a8736567",
+      "ClickMe": "5c9f15b52aa8207bd06ed5a29dc7a390c5c4d5e5791f41a8175852164c4bacba",
+      "ClickedMany": "f872acbf6c1cb4ca7f70c19010f0332e62ae6c9d5185f8b3ad39332d5e71cfa8",
+      "ClickedOnce": "9db980071844a1d76338b850093bf691ed34769f759450925d7fa007b13faf98",
+      "HelloWorld": "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f",
+      "ReviewHint": "306bc869cc4c2d3da82d5d3d28a44404b1d5d13d60fc28925579ebd3f24e8958",
+      "Welcome": "7244b7266207ad2e1c877eef99c2c2cfdc0c1689c1cf5997364daabb5e0e8976"
+    },
+    "fr": {
+      "AppTitle": "5ae04bf687c2203eabf3244c2f9c7d01fd876bda6955b7d33a526993a8736567",
+      "ClickMe": "5c9f15b52aa8207bd06ed5a29dc7a390c5c4d5e5791f41a8175852164c4bacba",
+      "ClickedMany": "f872acbf6c1cb4ca7f70c19010f0332e62ae6c9d5185f8b3ad39332d5e71cfa8",
+      "ClickedOnce": "9db980071844a1d76338b850093bf691ed34769f759450925d7fa007b13faf98",
+      "HelloWorld": "dffd6021bb2bd5b0af676290809ec3a53191dd81c7f70a4b28688a362182986f",
+      "ReviewHint": "306bc869cc4c2d3da82d5d3d28a44404b1d5d13d60fc28925579ebd3f24e8958",
+      "Welcome": "7244b7266207ad2e1c877eef99c2c2cfdc0c1689c1cf5997364daabb5e0e8976"
+    }
+  }
+}

@@ -1,3 +1,10 @@
+---
+name: nuvloc-translate
+description: Translate missing and stale keys from nuvloc plan. Review with a native speaker before ship.
+---
+
+# /nuvloc.translate
+
 Translate missing and stale localization keys. You are the translator. Do not call a third-party translation HTTP API.
 
 1. Read `i18n.json` and `.nuvloc/rules.md`.
@@ -7,3 +14,5 @@ Translate missing and stale localization keys. You are the translator. Do not ca
 5. Run `nuvloc check --configfile <i18n.json> --write-cache`. If check fails, fix placeholder mismatches and stop.
 
 End the turn by repeating that NuvLoc does not give a 100% guarantee on translated text. Agent wording can be inaccurate or culturally off. Review every culture file with a native speaker of that language before you ship. Coverage and placeholder checks only prove completeness, not correctness.
+
+NuvLoc does not give a 100% guarantee on translated text. Agent wording can be inaccurate or culturally off. Review every culture file with a native speaker of that language before you ship. Coverage and placeholder checks only prove completeness, not correctness.

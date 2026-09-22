@@ -28,6 +28,8 @@ public sealed class InitAndStatusTests
         Assert.True(File.Exists(Path.Combine(dir.Path, ".cursor", "skills", "nuvloc-translate", "SKILL.md")));
         Assert.True(File.Exists(Path.Combine(dir.Path, ".cursor", "skills", "nuvloc-status", "SKILL.md")));
         Assert.True(File.Exists(Path.Combine(dir.Path, ".nuvloc", "rules.md")));
+        Assert.True(File.Exists(Path.Combine(dir.Path, ".nuvloc", "reference", "dotnet-resx.md")));
+        Assert.False(File.Exists(Path.Combine(dir.Path, ".nuvloc", "reference", "maui-resx.md")));
         Assert.Contains("/nuvloc.translate", output, StringComparison.Ordinal);
         Assert.Contains(Disclaimer.Text, output, StringComparison.Ordinal);
         Assert.Contains(Disclaimer.Text, File.ReadAllText(Path.Combine(dir.Path, ".cursor", "skills", "nuvloc-translate", "SKILL.md")), StringComparison.Ordinal);

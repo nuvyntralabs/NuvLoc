@@ -11,10 +11,10 @@
     <RootNamespace>NuvyntraLabs.NuvLoc.Cli</RootNamespace>
     <AssemblyName>NuvyntraLabs.NuvLoc.Cli</AssemblyName>
     <PackageId>NuvyntraLabs.NuvLoc.Cli</PackageId>
-    <Title>nuvloc — agent-driven localization for .NET MAUI</Title>
+    <Title>nuvloc — agent-driven localization for sibling .resx hosts</Title>
     <Description>dotnet tool that checks i18n.json, diffs .resx culture files, and installs /nuvloc.translate and /nuvloc.status for your coding agent. The agent translates; NuvLoc does not call a vendor API.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageReleaseNotes>1.0.0: init --agent, plan / status / check, /nuvloc.translate and /nuvloc.status. No API keys. Native-language review required.</PackageReleaseNotes>
+    <PackageReleaseNotes>1.1.0: maui, wpf, winui, avalonia, and uno sibling .resx hosts. Same adapter and path rule. No API keys. Native-language review required.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

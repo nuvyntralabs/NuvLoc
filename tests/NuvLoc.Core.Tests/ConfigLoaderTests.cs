@@ -29,6 +29,52 @@ public sealed class ConfigLoaderTests
         Assert.EndsWith("AppResources.es.resx", result.Config.TargetPath("es"));
     }
 
+    [Theory]
+    [InlineData("maui")]
+    [InlineData("wpf")]
+    [InlineData("winui")]
+    [InlineData("avalonia")]
+    [InlineData("uno")]
+    public void Known_platforms_load(string platform)
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "AppResources.resx"), "<root></root>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, $$"""{"platform":"{{platform}}","source":"AppResources.resx","languages":["es"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.True(result.Success, string.Join("; ", result.Errors.Select(e => e.Message)));
+        Assert.Equal(platform, result.Config!.Platform);
+        Assert.EndsWith("AppResources.es.resx", result.Config.TargetPath("es"));
+    }
+
+    [Fact]
+    public void Unknown_platform_fails()
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "AppResources.resx"), "<root></root>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, """{"platform":"android","source":"AppResources.resx","languages":["es"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.False(result.Success);
+        Assert.Contains(result.Errors, e => e.Message.Contains("android", StringComparison.OrdinalIgnoreCase));
+        Assert.Contains(result.Errors, e => e.Message.Contains("Supported:", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Non_resx_source_fails()
+    {
+        using var dir = new TempDir();
+        File.WriteAllText(Path.Combine(dir.Path, "strings.xml"), "<resources></resources>");
+        var config = Path.Combine(dir.Path, "i18n.json");
+        File.WriteAllText(config, """{"platform":"maui","source":"strings.xml","languages":["es"]}""");
+
+        var result = ConfigLoader.Load(config);
+        Assert.False(result.Success);
+        Assert.Contains(result.Errors, e => e.Message.Contains("sibling .resx", StringComparison.OrdinalIgnoreCase));
+    }
+
     [Fact]
     public void English_in_languages_fails()
     {
