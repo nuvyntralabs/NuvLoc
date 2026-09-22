@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   test-and-pack:
     runs-on: ubuntu-latest
@@ -24,11 +28,19 @@ jobs:
           path: artifacts/*.nupkg
 
       # Pipeline-only publish. Never push from a local clone.
+      # secrets cannot be used in if:; check keys in the script instead.
       - name: Push nuget.org
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && (secrets.NUGET_KEY_NUVLOC != '' || secrets.NUGET_KEY_NUVYN != '')
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          NUGET_KEY_NUVLOC: ${{ secrets.NUGET_KEY_NUVLOC }}
+          NUGET_KEY_NUVYN: ${{ secrets.NUGET_KEY_NUVYN }}
         run: |
-          KEY="${{ secrets.NUGET_KEY_NUVLOC }}"
-          if [ -z "$KEY" ]; then KEY="${{ secrets.NUGET_KEY_NUVYN }}"; fi
+          KEY="${NUGET_KEY_NUVLOC:-}"
+          if [ -z "$KEY" ]; then KEY="${NUGET_KEY_NUVYN:-}"; fi
+          if [ -z "$KEY" ]; then
+            echo "No NUGET_KEY_NUVLOC or NUGET_KEY_NUVYN; skip nuget.org push."
+            exit 0
+          fi
           dotnet nuget push artifacts/*.nupkg --api-key "$KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
       - name: Push GitHub Packages
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
